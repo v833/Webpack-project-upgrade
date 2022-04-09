@@ -12,10 +12,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.css$/,
+        test: /\.css$/,
         use: ['style-loader','css-loader'],
+      },
+      {
+        test: /\.wq$/,
+        use: [path.resolve(__dirname, './loader/wq-loader.js')],
       }
     ]
   }
-
 }
