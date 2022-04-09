@@ -1,2 +1,2 @@
-const a = 5
-console.log(a);
+import './index.css';
+console.log('hello world');
