@@ -1,11 +1,11 @@
-const path = require("path")
-const Webpack = require("webpack")
-const HtmlWebpackPlugin = require("html-webpack-plugin")
-const CopyWebpackPlugin = require("copy-webpack-plugin")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const UgifyJsPlugin = require("uglifyjs-webpack-plugin")
-const CssMiniMizerPlugin = require("css-minimizer-webpack-plugin")
-
+const path = require("path");
+const Webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UgifyJsPlugin = require("uglifyjs-webpack-plugin");
+const CssMiniMizerPlugin = require("css-minimizer-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -13,7 +13,7 @@ module.exports = {
     index: "./src/index.js",
     login: "./src/login.js",
   },
-  // devtool: 'eval-cheap-module-source-map',
+  devtool: "eval-cheap-module-source-map",
   output: {
     // [name].js  name 对应 entry 中的 key => bundle
     // [hash].js  hash 对应 webpack 的 hash
@@ -52,20 +52,39 @@ module.exports = {
           filename: "image/[name].[hash:6][ext]",
         },
       },
+      {
+        test: /\.ejs$/,
+        loader: "ejs-loader",
+        options: {
+          esModule: false, // 默认为 true，如果为 false，则模板中的 import 语句不会被解析为 ES Module
+        },
+      },
     ],
   },
   optimization: {
-    // 压缩js代码 使用uglifyjs-webpack-plugin 
+    // 压缩js代码 使用uglifyjs-webpack-plugin
     // 剥离js代码 不会改变代码的结构 但是会改变代码的可读性
     minimize: true,
     minimizer: [
       new UgifyJsPlugin({
         cache: true, // 开启缓存
         parallel: true, // 开启并行压缩
-        sourceMap: true, // 开启sourceMap
+        sourceMap: false, // 开启sourceMap
       }),
-      new CssMiniMizerPlugin()
-    ]
+      new CssMiniMizerPlugin(),
+    ],
+    splitChunks: {
+      chunks: "all", // 全部代码分离
+      minSize: 200 * 1024, // 分离的最小文件大小
+      cacheGroups: {
+        // 公共代码分离
+        jquery: {
+          test: /jquery/,
+          name: "jquery",
+          chunks: "all",
+        },
+      },
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -92,14 +111,17 @@ module.exports = {
       jQuery: "jquery",
     }),
     new CopyWebpackPlugin({
-      patterns:[{
-        from: path.resolve(__dirname, "./src/img"),
-        to: path.resolve(__dirname, "./dist/img"),
-      }]
+      patterns: [
+        {
+          from: path.resolve(__dirname, "./src/img"),
+          to: path.resolve(__dirname, "./dist/img"),
+        },
+      ],
     }),
     new MiniCssExtractPlugin({
       filename: "css/[name].css",
       chunkFilename: "css/[name].chunk.css",
     }),
+    new CleanWebpackPlugin(),
   ],
 };
