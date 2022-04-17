@@ -1,7 +1,12 @@
-const path = require("path");
-const Webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const path = require("path")
+const Webpack = require("webpack")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const UgifyJsPlugin = require("uglifyjs-webpack-plugin")
+const CssMiniMizerPlugin = require("css-minimizer-webpack-plugin")
+
+
 module.exports = {
   mode: "development",
   entry: {
@@ -16,6 +21,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   devServer: {
+    // 将打包文件放在内存中
     static: {
       directory: path.resolve(__dirname, "dist"),
     },
@@ -28,10 +34,10 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|svg|jpe?g|gif)$/i,
         type: "asset",
         parser: {
           // 如果一个模块源码大小小于 maxSize，
@@ -47,6 +53,19 @@ module.exports = {
         },
       },
     ],
+  },
+  optimization: {
+    // 压缩js代码 使用uglifyjs-webpack-plugin 
+    // 剥离js代码 不会改变代码的结构 但是会改变代码的可读性
+    minimize: true,
+    minimizer: [
+      new UgifyJsPlugin({
+        cache: true, // 开启缓存
+        parallel: true, // 开启并行压缩
+        sourceMap: true, // 开启sourceMap
+      }),
+      new CssMiniMizerPlugin()
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -77,6 +96,10 @@ module.exports = {
         from: path.resolve(__dirname, "./src/img"),
         to: path.resolve(__dirname, "./dist/img"),
       }]
-    })
+    }),
+    new MiniCssExtractPlugin({
+      filename: "css/[name].css",
+      chunkFilename: "css/[name].chunk.css",
+    }),
   ],
 };
