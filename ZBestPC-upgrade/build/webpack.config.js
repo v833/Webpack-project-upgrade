@@ -10,20 +10,20 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
-    index: "./src/index.js",
-    login: "./src/login.js",
+    index: path.resolve(__dirname, '../src/index.js'),
+    login: path.resolve(__dirname, '../src/login.js'),
   },
   devtool: "eval-cheap-module-source-map",
   output: {
     // [name].js  name 对应 entry 中的 key => bundle
     // [hash].js  hash 对应 webpack 的 hash
     filename: "js/[name].js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "../dist"),
   },
   devServer: {
     // 将打包文件放在内存中
     static: {
-      directory: path.resolve(__dirname, "dist"),
+      directory: path.resolve(__dirname, "../dist"),
     },
     compress: true,
     port: 1115,
@@ -113,8 +113,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "./src/img"),
-          to: path.resolve(__dirname, "./dist/img"),
+          from: path.resolve(__dirname, "../src/img"),
+          to: path.resolve(__dirname, "../dist/img"),
         },
       ],
     }),
