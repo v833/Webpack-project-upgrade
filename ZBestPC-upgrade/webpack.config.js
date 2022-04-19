@@ -81,7 +81,7 @@ module.exports = {
         jquery: {
           test: /jquery/,
           name: "jquery",
-          chunks: "all",
+          chunks: "all", // 全部代码分离
         },
       },
     },
