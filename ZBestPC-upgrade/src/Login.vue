@@ -1,5 +1,4 @@
 <template>
-	<div>
 		<!-------------------login-------------------------->
 		<div class="login">
 			<form action="#" method="post">
@@ -12,7 +11,6 @@
 				<p class="txt"><a class="" href="reg.html">免费注册</a><a href="forget.html">忘记密码？</a></p>
 			</form>
 		</div>
-	</div>
 </template>
 
 <script>

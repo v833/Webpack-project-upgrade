@@ -7,8 +7,8 @@
 					<h1 class="fl"><a href="index.html"><img src="img/logo.png"/></a></h1>
 					<div class="fr clearfix" id="top1">
 						<p class="fl">
-							<a href="#" id="login">登录</a>
-							<a href="#" id="reg">注册</a>
+							<a @click="handleLoginClick" id="login">登录</a>
+							<a @click="handleRegClick" id="reg">注册</a>
 						</p>
 						<form action="#" method="get" class="fl">
 							<input type="text" placeholder="热门搜索：干花花瓶" />
@@ -417,7 +417,19 @@ import './js/nav'
 import './js/pro'
 import './js/cart'
 export default {
-  name: 'Home'
+  name: 'Home',
+	methods: {
+		handleLoginClick(){
+			this.$router.push({
+				path: '/login'
+			})
+		},
+		handleRegClick() {
+			this.$router.push({
+				// path: '/reg'
+			})
+		}
+	}
 }
 </script>
 
