@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:vue": "webpack-dev-server --config ./build/webpack.vue.config.js",
+    "dev:mpa": "webpack-dev-server --config ./build/webpack.vue.mpa.config.js",
     "build:vue": "webpack --config ./build/webpack.vue.config.js",
     "dev": "webpack-dev-server --config ./build/webpack.config.js",
     "build": "webpack --config ./build/webpack.config.js",
