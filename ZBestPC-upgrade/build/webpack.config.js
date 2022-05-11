@@ -7,8 +7,19 @@ const UgifyJsPlugin = require("uglifyjs-webpack-plugin");
 const CssMiniMizerPlugin = require("css-minimizer-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-module.exports = {
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
+
+const addAssetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin");
+
+const smp = new SpeedMeasurePlugin({
+  disable: process.env.NODE_ENV === "production",
+  outputFormat: "human",
+});
+console.log(require('os').cpus())
+module.exports = smp.wrap({
   mode: "development",
+  // publicPath: './',
   entry: {
     index: path.resolve(__dirname, '../src/index.js'),
     login: path.resolve(__dirname, '../src/login.js'),
@@ -19,6 +30,7 @@ module.exports = {
     // [hash].js  hash 对应 webpack 的 hash
     filename: "js/[name].js",
     path: path.resolve(__dirname, "../dist"),
+    publicPath: './'
   },
   devServer: {
     // 将打包文件放在内存中
@@ -59,6 +71,16 @@ module.exports = {
           esModule: false, // 默认为 true，如果为 false，则模板中的 import 语句不会被解析为 ES Module
         },
       },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: 'thread-loader',
+          options: {
+            worker: 2
+          }
+        }]
+      }
     ],
   },
   optimization: {
@@ -116,12 +138,27 @@ module.exports = {
           from: path.resolve(__dirname, "../src/img"),
           to: path.resolve(__dirname, "../dist/img"),
         },
+        // {
+        //   from: path.resolve(__dirname, "../dll/jquery.dll.js"),
+        //   to: path.resolve(__dirname, "../dist/js/jquery.dll.js"),
+        // }
       ],
     }),
     new MiniCssExtractPlugin({
       filename: "css/[name].css",
       chunkFilename: "css/[name].chunk.css",
+      // publicPath: "./",
     }),
     new CleanWebpackPlugin(),
+    new WebpackBundleAnalyzer({
+      analyzerMode: "disable",
+    }),
+    new Webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: path.resolve(__dirname, "../dll/jquery.manifest.json"),
+    }),
+    new addAssetHtmlWebpackPlugin({
+      filepath: path.resolve(__dirname, "../dll/jquery.dll.js"),
+    })
   ],
-};
+})
